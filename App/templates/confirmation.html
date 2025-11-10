@@ -1,0 +1,92 @@
+<!-- confirmation.html -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5 text-center">
+    <div class="mb-4">
+        <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+    </div>
+    <h2>Thank you for your order!</h2>
+    <p>Your order #{{ order.order_number }} is confirmed. You'll receive a confirmation email with your order details and tracking information.</p>
+
+    <div class="card mx-auto mt-4" style="max-width: 600px;">
+        <div class="card-header">
+            <h5>Order Summary</h5>
+        </div>
+        <div class="card-body">
+            {% for item in order.items.all %}
+            <div class="d-flex mb-3">
+                <img src="{{ item.product.image.url }}" width="60" class="me-3 rounded" alt="{{ item.product.name }}">
+                <div class="flex-grow-1">
+                    <h6>{{ item.product.name }}</h6>
+                    <p class="mb-0">{{ item.quantity }} x {{ item.price|floatformat:2 }}</p>
+                </div>
+                <div class="text-end">${{ item.quantity|floatformat:0 }} × {{ item.price|floatformat:2 }} = {{ item.quantity|floatformat:0 }} × {{ item.price|floatformat:2 }}</div>
+            </div>
+            {% endfor %}
+            <hr>
+            <div class="d-flex justify-content-between mb-2">
+                <span>Subtotal:</span>
+                <span>${{ order.subtotal|floatformat:2 }}</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+                <span>Shipping:</span>
+                <span>${{ order.shipping_cost|floatformat:2 }}</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+                <span>Taxes:</span>
+                <span>${{ order.tax|floatformat:2 }}</span>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between fw-bold">
+                <span>Total:</span>
+                <span>${{ order.total|floatformat:2 }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h6>Shipping Address</h6>
+            <p>
+                {{ order.shipping_address.full_name }}<br>
+                {{ order.shipping_address.address }}<br>
+                {{ order.shipping_address.city }}, {{ order.shipping_address.state }} {{ order.shipping_address.zip_code }}<br>
+                {{ order.shipping_address.country }}
+            </p>
+        </div>
+        <div class="col-md-6">
+            <h6>Payment Method</h6>
+            <p>
+                {% if order.payment.method == 'card' %}
+                    Visa ending in {{ order.payment.card_last_four }}
+                {% else %}
+                    {{ order.payment.method|title }}
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <h6>Estimated Delivery</h6>
+        <p class="text-primary">July 30, 2024</p>
+    </div>
+
+    <div class="mt-4">
+        <a href="#" class="btn btn-primary">Track Order</a>
+        <a href="#" class="btn btn-outline-primary ms-2">View Order History</a>
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'shop' %}" class="btn btn-link">Continue Shopping</a>
+    </div>
+
+    <div class="mt-5">
+        <p>Share your coffee love!</p>
+        <div class="social-links">
+            <a href="#" class="social-link"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="social-link"><i class="bi bi-instagram"></i></a>
+            <a href="#" class="social-link"><i class="bi bi-twitter"></i></a>
+        </div>
+    </div>
+</div>
+{% endblock %}

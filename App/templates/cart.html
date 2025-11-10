@@ -1,0 +1,74 @@
+<!-- cart.html -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <h2>Your Cart</h2>
+    {% if cart_items %}
+    <div class="row">
+        <div class="col-lg-8">
+            {% for item in cart_items %}
+            <div class="card mb-3">
+                <div class="row g-0">
+                    <div class="col-md-3">
+                        <img src="{{ item.product.image.url }}" class="img-fluid rounded-start" alt="{{ item.product.name }}">
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ item.product.name }}</h5>
+                            <p class="card-text">{{ item.product.description|truncatewords:10 }}</p>
+                            <form method="POST" action="{% url 'update_cart_quantity' item.id %}">
+                                {% csrf_token %}
+                                <div class="input-group" style="max-width: 120px;">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="this.parentNode.querySelector('input').stepDown()">-</button>
+                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control text-center" onchange="this.form.submit()">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="this.parentNode.querySelector('input').stepUp()">+</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-center justify-content-end">
+                        <div class="text-end me-3">
+                            <div>Gh₵{{ item.total_price|floatformat:2 }}</div>
+                            <a href="{% url 'remove_from_cart' item.id %}" class="text-danger">Remove</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            <a href="{% url 'shop' %}" class="btn btn-outline-primary mt-3">&larr; Continue Shopping</a>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal:</span>
+                        <span>Gh₵{{ subtotal|floatformat:2 }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Shipping estimate:</span>
+                        <span>Gh₵{{ shipping_estimate|floatformat:2 }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Tax estimate:</span>
+                        <span>Gh₵{{ tax|floatformat:2 }}</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between fw-bold">
+                        <span>Order total:</span>
+                        <span>Gh₵{{ order_total|floatformat:2 }}</span>
+                    </div>
+                    <!-- ✅ ONLY THIS BUTTON — leads to shipping info -->
+                    <a href="{% url 'shipping_info' %}" class="btn btn-primary w-100 mt-3">Proceed to Checkout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info">Your cart is empty.</div>
+    <a href="{% url 'shop' %}" class="btn btn-primary">Continue Shopping</a>
+    {% endif %}
+</div>
+{% endblock %}

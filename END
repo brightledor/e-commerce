@@ -1,0 +1,11 @@
+[33mcommit 330eae6fdee2cdbc759031267ec3f931d0e17947[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m
+Author: brightledor <bssidd230209@mug.edu.gh>
+Date:   Sun Nov 9 16:05:36 2025 -0800
+
+    Fix secrets issue
+
+[33mcommit 8718c5d036064641566dd03cca32ff0b64738ea3[m
+Author: brightledor <bssidd230209@mug.edu.gh>
+Date:   Sun Nov 9 15:24:25 2025 -0800
+
+    Initial commit

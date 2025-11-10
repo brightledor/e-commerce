@@ -1,0 +1,24 @@
+<!-- payment.html -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <h2>Payment</h2>
+    <div class="card">
+        <div class="card-body">
+            <h5>Order #{{ order.id }}</h5>
+            <p>Total: ${{ order.total|floatformat:2 }}</p>
+
+            <!-- Paystack Button -->
+           <form method="POST" action="{% url 'initiate_paystack_payment' %}">
+                {% csrf_token %}
+                <button type="submit" name="pay_with_paystack" class="btn btn-success w-100">
+                    Make payment
+                </button>
+            </form>
+
+            <!-- Optional: other methods -->
+            <!-- <a href="{% url 'review_order' %}" class="btn btn-outline-secondary mt-2">Pay Later</a> -->
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,356 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Admin Dashboard</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #ff7a00;
+            --secondary: #f9f7f5;
+            --dark: #333;
+            --light: #fff;
+            --success: #28a745;
+            --info: #17a2b8;
+            --warning: #ffc107;
+            --danger: #dc3545;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: var(--dark);
+        }
+        .sidebar {
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            background: white;
+            border-right: 1px solid #dee2e6;
+            padding-top: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            overflow-y: auto;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 24px;
+            min-height: 100vh;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .metric-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        .metric-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+            transition: all 0.5s ease;
+        }
+        .metric-label {
+            color: #666;
+            font-size: 0.95rem;
+        }
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+        .filter-bar {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
+        }
+        .btn-outline-primary {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .btn-outline-primary.active,
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            color: white;
+        }
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; height: auto; position: relative; border-bottom: 1px solid #dee2e6; }
+            .main-content { margin-left: 0; }
+            .header { flex-direction: column; align-items: flex-start; gap: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header p-3">
+            <strong>Admin Panel</strong>
+        </div>
+        <div class="sidebar-nav p-3">
+            <a href="{% url 'dashboard' %}" class="d-block py-2 text-decoration-none text-dark">Dashboard</a>
+            <a href="{% url 'admin_order' %}" class="d-block py-2 text-decoration-none text-dark">Orders</a>
+            <a href="{% url 'admin_product' %}" class="d-block py-2 text-decoration-none text-dark">Products</a>
+            <a href="{% url 'admin_customer' %}" class="d-block py-2 text-decoration-none text-dark">Customers</a>
+            <a href="{% url 'admin_analytic' %}" class="d-block py-2 text-decoration-none text-dark active">Analytics</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <h2>Analytics</h2>
+                <p>Insights into your store's performance.</p>
+            </div>
+        </div>
+
+        <!-- Date Filter -->
+        <div class="filter-bar" data-aos="fade-up">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-primary" onclick="setDateRange('today')">Today</button>
+                <button type="button" class="btn btn-outline-primary" onclick="setDateRange('week')">This Week</button>
+                <button type="button" class="btn btn-outline-primary active" onclick="setDateRange('month')">This Month</button>
+                <button type="button" class="btn btn-outline-primary" onclick="setDateRange('year')">This Year</button>
+            </div>
+        </div>
+
+        <!-- Metrics -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+                <div class="metric-card text-center">
+                    
+                </div>
+            </div>
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+                <div class="metric-card text-center">
+                    <div class="metric-value" id="totalOrders">{{ month_data.orders }}</div>
+                    <div class="metric-label">Total Orders</div>
+                </div>
+            </div>
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+                <div class="metric-card text-center">
+                    <div class="metric-value" id="avgOrderValue">${{ month_data.avg_order|floatformat:2 }}</div>
+                    <div class="metric-label">Avg. Order Value</div>
+                </div>
+            </div>
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="400">
+                <div class="metric-card text-center">
+                    <div class="metric-value" id="totalCustomers">{{ month_data.customers }}</div>
+                    <div class="metric-label">New Customers</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="row g-4">
+            <!-- Revenue Chart -->
+            <div class="col-lg-8" data-aos="fade-up">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Revenue Trend</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Products -->
+            <div class="col-lg-4" data-aos="fade-up">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Top Selling Products</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="topProductsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Chart -->
+            <div class="col-12" data-aos="fade-up">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Orders Over Time</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container" style="height: 250px;">
+                            <canvas id="ordersChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 600 });
+
+        // Real data from Django
+        const data = {
+            today: {{ today_data|safe }},
+            week: {{ week_data|safe }},
+            month: {{ month_data|safe }},
+            year: {{ year_data|safe }}
+        };
+
+        let currentRange = '{{ initial_range }}';
+
+        // Initialize charts
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        const ordersCtx = document.getElementById('ordersChart').getContext('2d');
+        const topProductsCtx = document.getElementById('topProductsChart').getContext('2d');
+
+        let revenueChart = new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: data.month.revenue_labels,
+                datasets: [{
+                    label: 'Revenue ($)',
+                    data: data.month.revenue_data,
+                    borderColor: '#ff7a00',
+                    backgroundColor: 'rgba(255, 122, 0, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { 
+                        beginAtZero: true, 
+                        ticks: { 
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        let ordersChart = new Chart(ordersCtx, {
+            type: 'bar',
+            data: {
+                labels: data.month.revenue_labels,
+                datasets: [{
+                    label: 'Orders',
+                    data: data.month.orders_data,
+                    backgroundColor: 'rgba(23, 162, 184, 0.6)',
+                    borderColor: 'rgba(23, 162, 184, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+
+        let topProductsChart = new Chart(topProductsCtx, {
+            type: 'doughnut',
+            data: {
+                labels: data.month.top_products_labels,
+                datasets: [{
+                    data: data.month.top_products_data,
+                    backgroundColor: ['#ff7a00', '#28a745', '#17a2b8'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+
+        // Update metrics and charts
+        function updateDashboard(range) {
+            const d = data[range];
+            
+            // Animate metric updates
+            animateValue('totalRevenue', parseFloat(document.getElementById('totalRevenue').textContent.replace(/[^0-9.-]+/g,"")), d.revenue, 1000, (value) => '$' + value.toLocaleString());
+            animateValue('totalOrders', parseInt(document.getElementById('totalOrders').textContent), d.orders, 1000, String);
+            animateValue('avgOrderValue', parseFloat(document.getElementById('avgOrderValue').textContent.replace(/[^0-9.-]+/g,"")), d.avg_order, 1000, (value) => '$' + value.toFixed(2));
+            animateValue('totalCustomers', parseInt(document.getElementById('totalCustomers').textContent), d.customers, 1000, String);
+
+            // Update charts
+            revenueChart.data.labels = d.revenue_labels;
+            revenueChart.data.datasets[0].data = d.revenue_data;
+            revenueChart.update();
+
+            ordersChart.data.labels = d.revenue_labels;
+            ordersChart.data.datasets[0].data = d.orders_data;
+            ordersChart.update();
+
+            topProductsChart.data.labels = d.top_products_labels;
+            topProductsChart.data.datasets[0].data = d.top_products_data;
+            topProductsChart.update();
+
+            // Update active button
+            document.querySelectorAll('.btn-outline-primary').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function setDateRange(range) {
+            currentRange = range;
+            updateDashboard(range);
+        }
+
+        // Smooth counter animation
+        function animateValue(id, start, end, duration, formatter) {
+            const obj = document.getElementById(id);
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.textContent = formatter(progress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Initialize with month data
+        window.onload = () => {
+            // No need to call updateDashboard since we render initial data server-side
+        };
+    </script>
+</body>
+</html>

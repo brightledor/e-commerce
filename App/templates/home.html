@@ -1,0 +1,893 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy Express</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff7a00;
+            --secondary: #f9f7f5;
+            --dark: #333;
+            --light: #fff;
+            --success: #28a745;
+            --offer: #ffeaa7;
+            --contact-bg: #f8f9fa;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--secondary);
+            color: var(--dark);
+        }
+        .navbar-brand {
+            font-weight: bold;
+            color: var(--primary) !important;
+        }
+
+        .carousel-item img {
+            height: 500px;
+            width: 100%;
+            object-fit: cover;
+            margin-left: 0%;
+            filter: brightness(100%);
+        }
+        .carousel-caption {
+            background: rgba(0,0,0,0.6);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: left;
+            max-width: 60%;
+            left: 10%;
+            bottom: 20%;
+        }
+        .carousel-caption h5 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white;
+        }
+        .btn-primary {
+            background-color: var(--primary);
+            border: none;
+            padding: 12px 30px;
+            font-weight: bold;
+            border-radius: 30px;
+        }
+        .btn-primary:hover {
+            background-color: #e66d00;
+            transform: scale(1.05);
+            transition: all 0.3s ease;
+        }
+        .section-title {
+            font-weight: bold;
+            margin-top: 50px;
+            margin-bottom: 25px;
+            color: var(--dark);
+        }
+        .product-card, .blog-card, .contact-card {
+            border: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            background: white;
+        }
+        .product-card:hover, .blog-card:hover, .contact-card:hover {
+            transform: translateY(-5px);
+        }
+        .product-img, .blog-img {
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+        }
+        .product-price {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+        .badge-new {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--primary);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .badge-sale {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--success);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+        }
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+        .footer-links a:hover {
+            color: white;
+        }
+        .newsletter {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .category-link {
+            text-decoration: none;
+            color: var(--dark);
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+        .category-link:hover {
+            background: var(--primary);
+            color: white !important;
+        }
+        .cart-icon {
+            position: relative;
+        }
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* Testimonial Section */
+        .testimonial-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .testimonial-header h2 {
+            font-weight: bold;
+            color: var(--dark);
+            font-size: 2rem;
+        }
+        .testimonial-header p {
+            color: #888;
+            font-size: 1rem;
+        }
+        .featured-testimonial {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+        }
+        .featured-testimonial .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .featured-testimonial .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .featured-testimonial .content {
+            flex-grow: 1;
+        }
+        .featured-testimonial .name {
+            font-weight: bold;
+            margin: 0 0 5px 0;
+        }
+        .featured-testimonial .title {
+            color: #666;
+            font-size: 0.9rem;
+            margin: 0 0 10px 0;
+        }
+        .featured-testimonial .stars {
+            color: #ff7a00;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        .featured-testimonial .quote {
+            font-style: italic;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .featured-testimonial .actions {
+            display: flex;
+            gap: 15px;
+        }
+        .featured-testimonial .btn-orange {
+            background: #ff7a00;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .featured-testimonial .btn-orange:hover {
+            background: #e66d00;
+        }
+        .featured-testimonial .share-link {
+            color: #666;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .featured-testimonial .share-link:hover {
+            text-decoration: underline;
+            color: #ff7a00;
+        }
+        .testimonials-slider {
+            position: relative;
+            padding: 20px 0;
+        }
+        .testimonials-slider .slider-controls {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            z-index: 10;
+        }
+        .testimonials-slider .slider-controls button {
+            background: rgba(255,255,255,0.8);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+        }
+        .testimonials-slider .slider-controls button:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+        .testimonials-slider .slider-controls button i {
+            font-size: 1.2rem;
+            color: #333;
+        }
+        .testimonials-row {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding: 10px 0;
+            scrollbar-width: thin;
+            scrollbar-color: #ddd #f5f5f5;
+            scroll-behavior: smooth;
+        }
+        .testimonials-row::-webkit-scrollbar {
+            height: 6px;
+        }
+        .testimonials-row::-webkit-scrollbar-track {
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+        .testimonials-row::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 10px;
+        }
+        .testimonial-card {
+            min-width: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .testimonial-card .stars {
+            color: #ff7a00;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        .testimonial-card .quote {
+            font-style: italic;
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+        .testimonial-card .footer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .testimonial-card .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        .testimonial-card .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .testimonial-card .name {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .testimonial-card .title {
+            color: #666;
+            font-size: 0.8rem;
+        }
+        /* Blog Section */
+        .blog-card .card-body {
+            padding: 20px;
+        }
+        .blog-meta {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .blog-title {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        .blog-excerpt {
+            font-size: 0.95rem;
+            color: #555;
+            margin-bottom: 15px;
+        }
+        .read-more {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .read-more:hover {
+            text-decoration: underline;
+        }
+        /* Featured Categories */
+        .category-card {
+            text-align: center;
+            padding: 20px 10px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+        }
+        .category-card:hover,
+        .category-card.active {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 2px solid var(--primary);
+            background-color: rgba(255, 122, 0, 0.05);
+        }
+        .category-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        .category-name {
+            font-weight: bold;
+            color: var(--dark);
+        }
+        /* Offer Banner */
+        .offer-banner {
+            background: var(--offer);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 30px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .offer-text {
+            font-weight: bold;
+            font-size: 1.3rem;
+            color: var(--dark);
+        }
+        .offer-highlight {
+            color: var(--primary);
+        }
+        /* Trending Tags */
+        .trending-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .tag {
+            background: #e0e0e0;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--dark);
+            text-decoration: none;
+        }
+        .tag:hover {
+            background: var(--primary);
+            color: white;
+        }
+        /* Contact Section */
+        .contact-section {
+            background-color: var(--contact-bg);
+            padding: 60px 0;
+            margin-top: 50px;
+        }
+        .contact-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .contact-header h2 {
+            font-weight: bold;
+            color: var(--dark);
+            font-size: 2.2rem;
+        }
+        .contact-header p {
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .contact-card {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            color: white;
+            font-size: 1.2rem;
+        }
+        .contact-details h5 {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .contact-details p {
+            margin: 0;
+            color: #555;
+        }
+        .contact-form .form-control {
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .contact-form textarea.form-control {
+            height: 150px;
+            resize: none;
+        }
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .social-link:hover {
+            background: var(--primary);
+            color: white;
+        }
+        .map-container {
+            height: 100%;
+            min-height: 400px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+   <!-- Hero Carousel -->
+<div id="heroCarousel" class="carousel slide" data-bs-ride="carousel"style="background-color:black">
+    <div class="carousel-indicators">
+        {% for item in carousels %}
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ forloop.counter0 }}" 
+                class="{% if forloop.first %}active{% endif %}" aria-label="{{ item.title }}"></button>
+        {% endfor %}
+    </div>
+    <div class="carousel-inner" style="width: auto;">
+        {% for item in carousels %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+            <img src="{{ item.image.url }}" class="d-block w-100" alt="{{ item.title }}" loading="lazy">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>{{ item.title }}</h5>
+                <p>{{ item.subtitle }}</p>
+                <a href="{{ item.button_url }}" class="btn btn-primary">{{ item.button_text }}</a>
+            </div>
+        </div>
+        {% empty %}
+        <!-- Fallback if no carousel items -->
+        <div class="carousel-item active">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQc8sbvPN-9OqD_REbQ6gK_x7VzT0EStdF96w&s" class="d-block w-100" alt="Default">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Welcome to Easy Express</h5>
+                <p>Discover our premium selection.</p>
+                <a href="#" class="btn btn-primary">Shop Now</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% if carousel_items|length > 1 %}
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+    {% endif %}
+</div>
+
+    <!-- Limited-Time Offer -->
+    <div class="container">
+        <div class="offer-banner" data-aos="fade-up">
+            <div class="offer-text">
+                ☕ <span class="offer-highlight">Flash Sale!</span> Get 25% off all Food — ends in 24 hours!
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Categories -->
+    <div class="container my-5">
+        <h2 class="section-title text-center" data-aos="fade-up">Shop by Category</h2>
+        <div class="row text-center">
+            {% for category in categories %}
+            <div class="col-6 col-md-3 mb-4" data-aos="fade-up">
+                <a href="{% url 'home' %}?category={{ category.name|urlencode }}" class="text-decoration-none">
+                    <div class="category-card {% if selected_category == category.name %}active{% endif %}">
+                        <div class="category-icon">
+                            <i class="{{ category.icon }}"></i>
+                        </div>
+                        <div class="category-name">{{ category.name }}</div>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <p class="text-center">No categories available.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- About Us Section -->
+    <div class="container my-5" id="about">
+        <div class="row align-items-center">
+            <div class="col-md-6 mb-4 mb-md-0" data-aos="fade-right">
+                <img src="https://cdn.qwenlm.ai/output/d37b1cec-1e87-436a-a585-3920905380cb/t2i/9a9b91f3-724f-4e8d-b8bb-f9362e6c9b6c/1760907626.png?key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXNvdXJjZV91c2VyX2lkIjoiZDM3YjFjZWMtMWU4Ny00MzZhLWE1ODUtMzkyMDkwNTM4MGNiIiwicmVzb3VyY2VfaWQiOiIxNzYwOTA3NjI2IiwicmVzb3VyY2VfY2hhdF9pZCI6IjdhNWFlZGUwLTZlNGEtNGM2Mi1iNjFiLTBiZmFlODIwMDc3NyJ9.feZ6OOFADd9G76K2yPzIInoeiHrkdYrZCckX3W4DX-Q&x-oss-process=image/resize,m_mfit,w_450,h_450" class="img-fluid rounded shadow" alt="Our Coffee Journey" loading="lazy">
+            </div>
+            <div class="col-md-6" data-aos="fade-left">
+                <h2 class="section-title">About Eatery Express</h2>
+                <p class="lead">
+                Welcome to Eatery Express, your local destination for authentic Ghanaian and Nigerian dishes made with love, tradition, and flavor! We serve hearty home-style meals that bring people together — from the rich aroma of jollof rice and egusi soup to the comforting taste of banku, eba, and fufu with spicy stews.
+
+At Eatery Express, we celebrate the best of West African cuisine — fresh ingredients, bold spices, and recipes passed down through generations. Whether you’re craving a quick lunch, a family meal, or a taste of home, our kitchen delivers fast, fresh, and flavorful food that satisfies every bite.
+
+Come and experience the warmth, culture, and soul of Africa — all in one plate.
+Eatery Express: Fast. Fresh. Truly African.
+               
+                <a href="#" class="btn btn-outline-primary mt-3">Learn More About Our Journey</a>
+            </div>
+        </div>
+    </div>
+
+   <!-- Featured Products -->
+<div class="container my-5">
+    <h2 class="section-title text-center" data-aos="fade-up">Featured Products</h2>
+    <div class="row">
+        {% for product in featured_products %}
+        <div class="col-md-3 mb-4" data-aos="fade-up">
+            <div class="card product-card">
+                <div style="position: relative;">
+                    <img src="{{ product.image.url }}" class="product-img" alt="{{ product.name }}">
+                    {% if product.is_new %}
+                        <span class="badge-new">NEW</span>
+                    {% elif product.is_on_sale %}
+                        <span class="badge-sale">SALE</span>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text">{{ product.description|truncatewords:8 }}</p>
+                    <p class="product-price">Ghc{{ product.price }}</p>
+                    <a href="{% url 'product_detail' product.id %}" class="btn btn-primary btn-sm w-100">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center col-12">No products in this category.</p>
+        {% endfor %}
+    </div>
+</div>
+    <!-- Best Sellers -->
+    <div class="container my-5">
+        <h2 class="section-title text-center" data-aos="fade-up">Best Sellers</h2>
+        <div class="row">
+            {% for product in best_sellers %}
+            <div class="col-md-3 mb-4" data-aos="fade-up">
+                <div class="card product-card">
+                    <img src="{{ product.image.url }}" class="product-img" alt="{{ product.name }}" loading="lazy">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">{{ product.description|truncatewords:8 }}</p>
+                        <p class="product-price">Ghc{{ product.price }}</p>
+                        <a href="{% url 'product_detail' product.id %}" class="btn btn-primary btn-sm w-100">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-center col-12">No best sellers in this category.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Testimonials, Blog, Contact, etc. remain unchanged -->
+    <!-- (Copy the rest of your original HTML from "Testimonials Section" to the end) -->
+
+    <!-- Testimonials Section -->
+    <div class="container my-5" data-aos="fade-up">
+        <div class="testimonial-header">
+            <h2>From Our Customers</h2>
+            <p>Hear what Eatery Express  lovers are saying about our food</p>
+        </div>
+        {% if featured_testimonial %}
+        <div class="featured-testimonial">
+            <div class="avatar">
+                <img src="{{ featured_testimonial.image.url }}" alt="{{ featured_testimonial.customer_name }}">
+            </div>
+            <div class="content">
+                <div class="name">{{ featured_testimonial.customer_name }}</div>
+                <div class="title">{{ featured_testimonial.title|default:"Customer" }}</div>
+                <div class="stars">
+                    {% for _ in "12345"|make_list|slice:":featured_testimonial.rating" %}
+                        <i class="bi bi-star-fill"></i>
+                    {% endfor %}
+                    {% for _ in "12345"|make_list|slice:featured_testimonial.rating %}
+                        <i class="bi bi-star"></i>
+                    {% endfor %}
+                </div>
+                <div class="quote">“{{ featured_testimonial.quote }}”</div>
+                <div class="actions">
+                    <a href="#" class="btn btn-orange">Read More Reviews</a>
+                    <a href="#" class="share-link">Share Your Experience</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="testimonials-slider">
+            <div class="slider-controls">
+                <button onclick="scrollLeft()" aria-label="Previous"><i class="bi bi-chevron-left"></i></button>
+                <button onclick="scrollRight()" aria-label="Next"><i class="bi bi-chevron-right"></i></button>
+            </div>
+            <div class="testimonials-row" id="testimonialsRow">
+                {% for testimonial in other_testimonials %}
+                <div class="testimonial-card">
+                    <div class="stars">
+                        {% for _ in "12345"|make_list|slice:":testimonial.rating" %}
+                            <i class="bi bi-star-fill"></i>
+                        {% endfor %}
+                        {% for _ in "12345"|make_list|slice:testimonial.rating %}
+                            <i class="bi bi-star"></i>
+                        {% endfor %}
+                    </div>
+                    <div class="quote">“{{ testimonial.quote }}”</div>
+                    <div class="footer">
+                        <div class="avatar">
+                            <img src="{{ testimonial.avatar_url|default:'https://via.placeholder.com/40' }}" alt="{{ testimonial.customer_name }}">
+                        </div>
+                        <div>
+                            <div class="name">{{ testimonial.customer_name }}</div>
+                            <div class="title">{{ testimonial.title|default:"Verified Customer" }}</div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Blog Section -->
+    <div class="container my-5">
+        <h2 class="section-title text-center" data-aos="fade-up">From Our Blog</h2>
+        <p class="text-center mb-4" data-aos="fade-up">Tips, stories, and brewing guides from our coffee experts.</p>
+        <div class="row">
+            {% for post in blog_posts %}
+            <div class="col-md-4 mb-4" data-aos="fade-up">
+                <div class="card blog-card">
+                    <img src="{{ post.image.url}}" class="blog-img" alt="{{ post.title }}" loading="lazy">
+                    <div class="card-body">
+                        <div class="blog-meta">{{ post.published_date|date:"F j, Y" }}</div>
+                        <h3 class="blog-title">{{ post.title }}</h3>
+                        <p class="blog-excerpt">{{ post.excerpt }}</p>
+                        <a href="#" class="read-more">Read Full Article →</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4" data-aos="fade-up">
+            <a href="#" class="btn btn-outline-primary">View All Articles</a>
+        </div>
+    </div>
+
+    <!-- Contact Section -->
+    <div class="contact-section" id="contact">
+        <div class="container">
+            <div class="contact-header" data-aos="fade-up">
+                <h2>Get In Touch</h2>
+                <p>We'd love to hear from you! Reach out for support, wholesale inquiries, or just to say hello.</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
+                    <div class="contact-info">
+                        <div class="contact-card">
+                            <div class="contact-icon"><i class="bi bi-geo-alt"></i></div>
+                            <div class="contact-details"><h5>Visit Us</h5><p>shika shika Ln 43 dansoma,Accra Ghana</p></div>
+                        </div>
+                        <div class="contact-card">
+                            <div class="contact-icon"><i class="bi bi-telephone"></i></div>
+                            <div class="contact-details"><h5>Call Us</h5><p>+2330534278308</p></div>
+                        </div>
+                        <div class="contact-card">
+                            <div class="contact-icon"><i class="bi bi-envelope"></i></div>
+                            <div class="contact-details"><h5>Email Us</h5><p>EateryExpress@gmail.com</p></div>
+                        </div>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="bi bi-instagram"></i></a>
+                            <a href="#" class="social-link"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="social-link"><i class="bi bi-twitter"></i></a>
+                            <a href="#" class="social-link"><i class="bi bi-pinterest"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6" data-aos="fade-left">
+                    <div class="map-container">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d10885.39487532433!2d-122.6819768!3d45.5230649!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x54950a93e7e8f3c1%3A0x6cb7d2e8c4a8b1a1!2sPortland%2C%20OR!5e0!3m2!1sen!2sus!4v1717000000000!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-12" data-aos="fade-up">
+                    <div class="bg-white p-4 rounded shadow">
+                        <h4 class="mb-4">Send Us a Message</h4>
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6"><input type="text" name="name" class="form-control" placeholder="Your Name" required></div>
+                                <div class="col-md-6"><input type="email" name="email" class="form-control" placeholder="Your Email" required></div>
+                            </div>
+                            <input type="text" name="subject" class="form-control" placeholder="Subject">
+                            <textarea name="message" class="form-control" placeholder="Your Message" required></textarea>
+                            <button type="submit" class="btn btn-primary w-100">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Newsletter -->
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="newsletter text-center" data-aos="zoom-in">
+                    <h3>Join Our Eatery Express Club</h3>
+                    <p>Get 10% off your first order + exclusive offers.</p>
+                    <form method="POST" action="#">
+                        <div class="input-group mb-3">
+                            <input type="email" class="form-control" placeholder="Your email address" required>
+                            <button class="btn btn-primary" type="submit">Subscribe</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <h5>Eatery Express</h5>
+                    <p>Crafting exceptional coffee experiences since 2020.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <div class="footer-links">
+                        <a href="{% url 'home' %}">Home</a>
+                        <a href="#">Shop</a>
+                        <a href="#about">About</a>
+                        <a href="#contact">Contact</a>
+                        <a href="#">Blog</a>
+                        <a href="{% url 'dashboard' %}">Admin</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h5>Follow Us</h5>
+                    <div class="footer-links">
+                        <a href="#"><i class="bi bi-instagram"></i> Instagram</a>
+                        <a href="#"><i class="bi bi-facebook"></i> Facebook</a>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <p>&copy; 2025 Eatery Express. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+        function scrollLeft() {
+            document.getElementById('testimonialsRow').scrollBy({ left: -300, behavior: 'smooth' });
+        }
+        function scrollRight() {
+            document.getElementById('testimonialsRow').scrollBy({ left: 300, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
+{% endblock %}

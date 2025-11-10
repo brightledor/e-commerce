@@ -1,0 +1,400 @@
+{% extends 'base.html' %}
+{% block content%}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop All Coffee - Brewtiful</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff7a00;
+            --secondary: #f9f7f5;
+            --dark: #333;
+            --light: #fff;
+            --success: #28a745;
+            --offer: #ffeaa7;
+            --contact-bg: #f8f9fa;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--secondary);
+            color: var(--dark);
+        }
+        .navbar-brand {
+            font-weight: bold;
+            color: var(--primary) !important;
+        }
+        .section-title {
+            font-weight: bold;
+            margin-top: 50px;
+            margin-bottom: 25px;
+            color: var(--dark);
+        }
+        .product-card {
+            border: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            background: white;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+        .product-img {
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+        }
+        .product-price {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+        .btn-add-to-cart {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            font-weight: bold;
+            border-radius: 30px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        .btn-add-to-cart:hover {
+            background: #e66d00;
+            transform: scale(1.05);
+        }
+        .filter-section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        .filter-title {
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--dark);
+            font-size: 1.2rem;
+        }
+        .form-select, .form-control {
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 0.95rem;
+            border: 1px solid #ddd;
+        }
+        .price-range {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .price-range input[type="range"] {
+            flex: 1;
+        }
+        .price-label {
+            min-width: 80px;
+            text-align: right;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+        }
+        .pagination a, .pagination span {
+            color: var(--dark);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin: 0 4px;
+            transition: all 0.2s;
+        }
+        .pagination a:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .pagination .active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .search-bar input {
+            flex-grow: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .search-bar button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .sort-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .sort-dropdown {
+            width: 220px;
+        }
+        .badge-new {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: var(--primary);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            z-index: 2;
+        }
+        .badge-sale {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: var(--success);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            z-index: 2;
+        }
+        .no-products {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+        }
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+        .footer-links a:hover {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+   
+
+    <!-- Shop Page Container -->
+    <div class="container mt-5">
+        <h1 class="section-title text-center">Shop All Food</h1>
+
+        <div class="row">
+            <!-- Filters Sidebar -->
+            <div class="col-lg-3">
+                <div class="filter-section">
+                    <h3 class="filter-title">Filter Products</h3>
+
+                    <!-- Search -->
+                    <div class="search-bar mb-4">
+                        <input type="text" id="searchInput" placeholder="Search coffee..." onkeyup="filterProducts()">
+                        <button type="button" onclick="filterProducts()"><i class="bi bi-search"></i></button>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Category</label>
+                        <select class="form-select" id="categoryFilter" onchange="applyFilters()">
+                            <option value="">All Categories</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat.id }}">{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Price Range -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Price Range</label>
+                        <div class="price-range">
+                            <input type="range" id="priceRange" min="0" max="100" value="100" step="5" oninput="updatePriceLabel()">
+                            <span id="priceLabel" class="price-label">Gh₵0 – Gh₵100</span>
+                        </div>
+                    </div>
+
+                    <!-- Roast Level (static for now) -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Roast Level</label>
+                        <select class="form-select" onchange="applyFilters()">
+                            <option value="">Any</option>
+                            <option>Light</option>
+                            <option>Medium</option>
+                            <option>Dark</option>
+                        </select>
+                    </div>
+
+                    <!-- Apply Button (for future AJAX) -->
+                    <button class="btn btn-outline-primary w-100" onclick="alert('Filters applied!')">Apply Filters</button>
+                </div>
+            </div>
+
+            <!-- Product Grid -->
+            <div class="col-lg-9">
+                <!-- Sort Controls -->
+                <div class="sort-controls">
+                    <div>
+                        <strong>{{ products.paginator.count }} products</strong>
+                    </div>
+                    <div>
+                        <select class="form-select sort-dropdown" onchange="location.href='?sort=' + this.value">
+                            <option value="default" {% if sort_by == 'default' %}selected{% endif %}>Default Sorting</option>
+                            <option value="price_asc" {% if sort_by == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                            <option value="price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                            <option value="name" {% if sort_by == 'name' %}selected{% endif %}>Name A-Z</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Products -->
+                {% if products %}
+                <div class="row">
+                    {% for product in products %}
+                    <div class="col-md-4 mb-4 product-item" data-name="{{ product.name|lower }}" data-category="{{ product.category.id }}">
+                        <div class="card product-card">
+                            <div style="position: relative;">
+                                <img src="{{ product.image.url }}" class="product-img" alt="{{ product.name }}" loading="lazy">
+                                {% if product.is_new %}
+                                    <span class="badge-new">NEW</span>
+                                {% elif product.is_on_sale %}
+                                    <span class="badge-sale">SALE</span>
+                                {% endif %}
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ product.name }}</h5>
+                                <p class="card-text">{{ product.description|truncatewords:6 }}</p>
+                                <p class="product-price">Gh₵{{ product.price }}</p>
+                                <a href="{% url 'product_detail' product.id %}" class="btn-add-to-cart">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination">
+                    {% if products.has_previous %}
+                        <a href="?page=1{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">&laquo; First</a>
+                        <a href="?page={{ products.previous_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">Previous</a>
+                    {% endif %}
+
+                    {% for num in products.paginator.page_range %}
+                        {% if products.number == num %}
+                            <span class="active">{{ num }}</span>
+                        {% else %}
+                            <a href="?page={{ num }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">{{ num }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if products.has_next %}
+                        <a href="?page={{ products.next_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">Next</a>
+                        <a href="?page={{ products.paginator.num_pages }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">Last &raquo;</a>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="no-products">
+                    <i class="bi bi-search" style="font-size: 3rem; opacity: 0.5;"></i>
+                    <h4 class="mt-3">No products found</h4>
+                    <p>Try adjusting your filters or check back soon!</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <h5>Brewtiful</h5>
+                    <p>Crafting exceptional coffee experiences since 2020.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <div class="footer-links">
+                        <a href="{% url 'home' %}">Home</a>
+                        <a href="{% url 'shop' %}">Shop</a>
+                        <a href="#about">About</a>
+                        <a href="#contact">Contact</a>
+                        <a href="#">Blog</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h5>Follow Us</h5>
+                    <div class="footer-links">
+                        <a href="#"><i class="bi bi-instagram"></i> Instagram</a>
+                        <a href="#"><i class="bi bi-facebook"></i> Facebook</a>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <p>&copy; 2025 Brewtiful. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+
+        function updatePriceLabel() {
+            const range = document.getElementById('priceRange');
+            document.getElementById('priceLabel').textContent = `$0 – $${range.value}`;
+        }
+
+        function filterProducts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const productItems = document.querySelectorAll('.product-item');
+
+            productItems.forEach(item => {
+                const name = item.dataset.name;
+                const category = item.dataset.category;
+                const matchesSearch = name.includes(searchTerm);
+                const matchesCategory = !categoryFilter || category === categoryFilter;
+
+                item.style.display = (matchesSearch && matchesCategory) ? 'block' : 'none';
+            });
+        }
+
+        function applyFilters() {
+            filterProducts();
+        }
+    </script>
+</body>
+</html>
+{% endblock %}

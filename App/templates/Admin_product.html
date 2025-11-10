@@ -1,0 +1,392 @@
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - Admin Dashboard</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary: #ff7a00;
+            --secondary: #f9f7f5;
+            --dark: #333;
+            --light: #fff;
+            --success: #28a745;
+            --info: #17a2b8;
+            --warning: #ffc107;
+            --danger: #dc3545;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: var(--dark);
+        }
+        .sidebar {
+            width: 220px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            background: white;
+            border-right: 1px solid #dee2e6;
+            padding-top: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            overflow-y: auto;
+        }
+        .main-content {
+            margin-left: 220px;
+            padding: 24px;
+            min-height: 100vh;
+        }
+        .page-header {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
+        }
+        .table thead th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        .product-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        .badge-new { background: var(--primary); color: white; }
+        .badge-sale { background: var(--success); color: white; }
+        .badge-regular { background: #e9ecef; color: var(--dark); }
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+        .expand-row {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .expand-row:hover {
+            background: #f8f9fa;
+        }
+        .expanded-content {
+            padding: 20px;
+            background: #fcfcfc;
+            border-top: 1px solid #eee;
+        }
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; height: auto; position: relative; border-bottom: 1px solid #dee2e6; }
+            .main-content { margin-left: 0; }
+            .product-image { width: 50px; height: 50px; }
+            .d-none-md { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header p-3">
+            <strong>Admin Panel</strong>
+        </div>
+        <div class="sidebar-nav p-3">
+            <a href="{% url 'dashboard' %}" class="d-block py-2 text-decoration-none text-dark">Dashboard</a>
+            <a href="{% url 'admin_order' %}" class="d-block py-2 text-decoration-none text-dark">Orders</a>
+            <a href="{% url 'admin_product' %}" class="d-block py-2 text-decoration-none text-dark active">Products</a>
+            <a href="{% url 'admin_customer' %}" class="d-block py-2 text-decoration-none text-dark">Customers</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="page-header">
+            <div class="d-flex flex-wrap justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">Products</h2>
+                    <p class="text-muted mb-0">Manage your Eatery Express inventory.</p>
+                </div>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                    <i class="bi bi-plus-lg"></i> Add Product
+                </button>
+            </div>
+
+            <!-- Filters -->
+            <div class="row g-2 mt-3">
+                <div class="col-md-5">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Search products..." onkeyup="filterTable()">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="categoryFilter" onchange="filterTable()">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.name }}">{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="statusFilter" onchange="filterTable()">
+                        <option value="">All Status</option>
+                        <option value="new">New</option>
+                        <option value="sale">On Sale</option>
+                        <option value="regular">Regular</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Table -->
+        <div class="card">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>PRODUCT</th>
+                            <th class="d-none-md">CATEGORY</th>
+                            <th>PRICE</th>
+                            <th>STATUS</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTableBody">
+                        {% for product in products %}
+                        <!-- Add data attributes to the row for filtering -->
+                        <tr class="expand-row" 
+                            onclick="toggleExpand(this)"
+                            data-name="{{ product.name|lower }}"
+                            data-category="{{ product.category.name|lower }}"
+                            data-status="{% if product.is_new %}new{% elif product.is_on_sale %}sale{% else %}regular{% endif %}">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ product.image.url }}" class="product-image me-3" alt="{{ product.name }}">
+                                    <div>
+                                        <div class="fw-bold">{{ product.name }}</div>
+                                        <div class="text-muted d-md-none mt-1">{{ product.category.name }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="d-none-md">{{ product.category.name }}</td>
+                            <td>${{ product.price|floatformat:2 }}</td>
+                            <td>
+                                {% if product.is_new %}
+                                    <span class="status-badge badge-new">NEW</span>
+                                {% elif product.is_on_sale %}
+                                    <span class="status-badge badge-sale">SALE</span>
+                                {% else %}
+                                    <span class="status-badge badge-regular">Regular</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <button class="action-btn btn-outline-primary" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#editProductModal{{ product.id }}">
+                                        <i class="bi bi-pencil" style="color:green;"></i>
+                                    </button>
+                                    <form method="POST" action="{% url 'delete_product' product.id %}" class="d-inline" onsubmit="return confirm('Delete this product?')">
+                                        {% csrf_token %}
+                                        <button type="submit" class="action-btn btn-outline-danger">
+                                            <i class="bi bi-trash" style="color: red;"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="expanded-content" style="display: none;">
+                            <td colspan="5">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <p>{{ product.description|default:"No description." }}</p>
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        <img src="{{ product.image.url }}" class="img-fluid rounded" style="max-height: 150px; object-fit: cover;">
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <i class="bi bi-box" style="font-size: 3rem; opacity: 0.4;"></i>
+                                <h5 class="mt-3">No products found</h5>
+                                <p>Add your first product to get started.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div class="modal fade" id="addProductModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="POST" action="{% url 'add_product' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" name="name" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Price ($)</label>
+                            <input type="number" step="0.01" name="price" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Image</label>
+                            <input type="file" name="image" class="form-control" accept="image/*" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <select name="category" class="form-select" required>
+                                {% for cat in categories %}
+                                <option value="{{ cat.id }}">{{ cat.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-check">
+                                <input type="checkbox" name="is_new" class="form-check-input">
+                                Mark as New
+                            </label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-check">
+                                <input type="checkbox" name="is_on_sale" class="form-check-input">
+                                On Sale
+                            </label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Product</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Product Modals -->
+    {% for product in products %}
+    <div class="modal fade" id="editProductModal{{ product.id }}" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="POST" action="{% url 'update_product' product.id %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" name="name" class="form-control" value="{{ product.name }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="3">{{ product.description }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Price ($)</label>
+                            <input type="number" step="0.01" name="price" class="form-control" value="{{ product.price }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Image</label>
+                            <input type="file" name="image" class="form-control" accept="image/*">
+                            <div class="form-text">Leave blank to keep current image</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <select name="category" class="form-select" required>
+                                {% for cat in categories %}
+                                <option value="{{ cat.id }}" {% if cat.id == product.category.id %}selected{% endif %}>{{ cat.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-check">
+                                <input type="checkbox" name="is_new" class="form-check-input" {% if product.is_new %}checked{% endif %}>
+                                Mark as New
+                            </label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-check">
+                                <input type="checkbox" name="is_on_sale" class="form-check-input" {% if product.is_on_sale %}checked{% endif %}>
+                                On Sale
+                            </label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleExpand(row) {
+            const nextRow = row.nextElementSibling;
+            if (nextRow && nextRow.classList.contains('expanded-content')) {
+                nextRow.style.display = nextRow.style.display === 'table-row' ? 'none' : 'table-row';
+            }
+        }
+
+        function filterTable() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            document.querySelectorAll('.expand-row').forEach(row => {
+                const name = row.dataset.name;
+                const category = row.dataset.category;
+                const status = row.dataset.status;
+
+                const matchesSearch = name.includes(searchTerm);
+                const matchesCategory = !categoryFilter || category.includes(categoryFilter);
+                const matchesStatus = !statusFilter || status === statusFilter;
+
+                const show = matchesSearch && matchesCategory && matchesStatus;
+                row.style.display = show ? '' : 'none';
+                // Also hide/show the expanded row
+                const expandedRow = row.nextElementSibling;
+                if (expandedRow && expandedRow.classList.contains('expanded-content')) {
+                    expandedRow.style.display = show ? 'table-row' : 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+{% endblock %}

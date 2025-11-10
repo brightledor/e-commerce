@@ -1,0 +1,355 @@
+{% extends 'base.html' %}
+{%  block content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - Brewtiful</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff7a00;
+            --secondary: #f9f7f5;
+            --dark: #333;
+            --light: #fff;
+            --success: #28a745;
+            --offer: #ffeaa7;
+            --contact-bg: #f8f9fa;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--secondary);
+            color: var(--dark);
+        }
+        .product-detail-container {
+            max-width: 1200px;
+            margin: 60px auto;
+            padding: 20px;
+        }
+        .product-image-main {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .product-image-thumb {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            border: 2px solid transparent;
+        }
+        .product-image-thumb.active {
+            border-color: var(--primary);
+        }
+        .product-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--dark);
+        }
+        .product-price {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+        .product-rating {
+            color: #ff7a00;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        .product-rating span {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .form-select, .form-control {
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 0.9rem;
+        }
+        .btn-add-to-cart {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-weight: bold;
+            border-radius: 30px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        .btn-add-to-cart:hover {
+            background: #e66d00;
+            transform: scale(1.05);
+        }
+        .section-title {
+            font-weight: bold;
+            margin-top: 50px;
+            margin-bottom: 25px;
+            color: var(--dark);
+        }
+        .review-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .review-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .review-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        .review-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .review-name {
+            font-weight: bold;
+        }
+        .review-date {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        .review-stars {
+            color: #ff7a00;
+            font-size: 1rem;
+            margin: 5px 0;
+        }
+        .review-text {
+            font-style: italic;
+            line-height: 1.5;
+        }
+        .related-products {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding: 10px 0;
+            scrollbar-width: thin;
+            scrollbar-color: #ddd #f5f5f5;
+        }
+        .related-product-card {
+            min-width: 200px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .related-product-img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .related-product-title {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--dark);
+        }
+        .related-product-price {
+            font-size: 1rem;
+            color: var(--primary);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+   
+
+    <!-- Product Detail Container -->
+    <div class="container product-detail-container">
+        <div class="row">
+            <!-- Product Images -->
+            <div class="col-md-6">
+                <img id="mainProductImage" src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image-main mb-3">
+                <div class="d-flex flex-wrap">
+                    <img src="{{ product.image.url }}" alt="Thumbnail" class="product-image-thumb active" onclick="changeMainImage(this)">
+                    <!-- Add more thumbnails if you support multiple images later -->
+                </div>
+            </div>
+
+            <!-- Product Info -->
+            <div class="col-md-6">
+                <h1 class="product-title">{{ product.name }}</h1>
+                <p class="text-muted">{{ product.description|truncatewords:20 }}</p>
+
+                <!-- Price -->
+                <div class="product-price">Gh₵{{ product.price }}</div>
+
+                <!-- Options -->
+                <div class="mb-3">
+                    <label for="grindSize" class="form-label">Grind Size</label>
+                    <select id="grindSize" class="form-select">
+                        <option>Whole Bean</option>
+                        <option>Fine Grind</option>
+                        <option>Medium Grind</option>
+                        <option>Coarse Grind</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="quantity" class="form-label">Quantity</label>
+                    <select id="quantity" class="form-select">
+                        <option>12 oz</option>
+                        <option>1 lb</option>
+                        <option>2 lb</option>
+                    </select>
+                </div>
+
+                <!-- Add to Cart Button -->
+                <form method="POST" action="{% url 'add_to_cart' product.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-add-to-cart">Add to Cart</button>
+                </form>
+
+                <!-- About This Coffee -->
+                <div class="mt-4">
+                    <h5>About this coffee</h5>
+                    <p>{{ product.description }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Reviews Section -->
+        <div class="mt-5">
+            <h2 class="section-title">Customer Reviews</h2>
+
+            {% if reviews %}
+                {% for review in reviews %}
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="review-avatar">
+                            <img src="{{ review.avatar.url}}" alt="{{ review.customer_name }}">
+                        </div>
+                        <div>
+                            <div class="review-name">{{ review.customer_name }}</div>
+                            <div class="review-date">{{ review.created_at|date:"F Y" }}</div>
+                        </div>
+                        <div class="review-stars ms-auto">
+                            {% for _ in "12345"|make_list|slice:":review.rating" %}
+                                <i class="bi bi-star-fill"></i>
+                            {% endfor %}
+                            {% for _ in "12345"|make_list|slice:review.rating %}
+                                <i class="bi bi-star"></i>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="review-text">
+                        “{{ review.quote }}”
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">No reviews yet. Be the first to share your experience!</p>
+            {% endif %}
+
+            <!-- Review Submission Form -->
+            <div class="mt-4">
+                <h4>Write a Review</h4>
+                <form method="POST" action="{% url 'submit_review' product.id %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <input type="text" name="customer_name" class="form-control" placeholder="Your Name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Your Rating</label>
+                        <div>
+                            <select name="rating" class="form-select" style="width: auto; display: inline-block;" required>
+                                <option value="5">★★★★★</option>
+                                <option value="4">★★★★☆</option>
+                                <option value="3">★★★☆☆</option>
+                                <option value="2">★★☆☆☆</option>
+                                <option value="1">★☆☆☆☆</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <textarea name="quote" class="form-control" rows="4" placeholder="Share your experience..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Review</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Related Products -->
+        <div class="mt-5">
+            <h2 class="section-title">Related Products</h2>
+            <div class="related-products">
+                {% for related in related_products %}
+                <div class="related-product-card">
+                    <img src="{{ related.image.url }}" alt="{{ related.name }}" class="related-product-img">
+                    <div class="related-product-title">{{ related.name }}</div>
+                    <div class="related-product-price">Gh₵{{ related.price }}</div>
+                </div>
+                {% empty %}
+                <p>No related products found.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center mt-5">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <h5>Eatery Express</h5>
+                    <p>Crafting exceptional coffee experiences since 2020.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <div class="footer-links">
+                        <a href="{% url 'home' %}">Home</a>
+                        <a href="{% url 'shop' %}">Shop</a>
+                        <a href="#about">About</a>
+                        <a href="#contact">Contact</a>
+                        <a href="#blog">Blog</a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h5>Follow Us</h5>
+                    <div class="footer-links">
+                        <a href="#"><i class="bi bi-instagram"></i> Instagram</a>
+                        <a href="#"><i class="bi bi-facebook"></i> Facebook</a>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <p>&copy; 2025 Eatery Express. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+
+        function changeMainImage(img) {
+            document.getElementById('mainProductImage').src = img.src;
+            document.querySelectorAll('.product-image-thumb').forEach(thumb => thumb.classList.remove('active'));
+            img.classList.add('active');
+        }
+    </script>
+</body>
+</html>
+{% endblock %}

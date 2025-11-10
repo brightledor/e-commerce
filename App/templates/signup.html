@@ -1,0 +1,53 @@
+
+{% load socialaccount %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create an Account</title>
+    <link rel="stylesheet" href="{% static 'signup.css' %}">
+</head>
+<body>
+    <div class="container">
+        {% for icon in logos %}
+            <h5><img src="{{ icon.image.url }}" alt="Logo" style="height: 70px;"></h5>
+        {% endfor %}
+        <h1>Create an Account</h1>
+        <p>Join the Eatery family today.</p>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="messages">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        <!-- Standard Signup Form -->
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="full_name" placeholder="Enter your full name" value="{{ full_name|default:'' }}" required><br>
+            <input type="email" name="email" placeholder="you@example.com" value="{{ email|default:'' }}" required style="width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;
+        "><br>
+            <input type="password" name="password" placeholder="Create a password" required><br>
+            <input type="password" name="confirm_password" placeholder="Confirm your password" required><br>
+            <div class="newsletter">
+                <input type="checkbox" name="subscribe" id="subscribe">
+                <label for="subscribe">Subscribe to our newsletter<br><small>Get updates and exclusive offers.</small></label>
+            </div>
+            <button type="submit">Create Account</button>
+        </form>
+
+        <div class="divider"><span>Or sign up with</span></div>
+
+        <!-- Google Signup Button -->
+        <!-- Google Signup Button -->
+    <div class="social-btns">
+        <a href="" class="social-btn">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google"> Google
+        </a>
+    </div>
+
+        <div class="login-link">
+            Already have an account? <a href="{% url 'login_page' %}">Sign In</a>
+        </div>
+    </div>
+</body>
+</html>
