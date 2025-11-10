@@ -150,6 +150,7 @@ PAYSTACK_PUBLIC_KEY = 'pk_live_a7575e03655f155f401beffdc73d044844af13e3'
 PAYSTACK_SECRET_KEY = 'sk_live_55defb080c4cd9aa1ca6022c4b638b72bf76acbf'
 
 
+CSRF_TRUSTED_ORIGINS=['https://e-commerce-1lwr.onrender.com']
 # Allauth settings
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
