@@ -1,14 +1,15 @@
-  * {
+* {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         }
 
         html, body {
             height: 100%;
-            overflow: hidden;
-            background-color: #f8f9fa;
+            width: 100%;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
         body {
@@ -17,26 +18,27 @@
             justify-content: center;
             min-height: 100vh;
             padding: 20px;
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
             position: relative;
         }
 
+        /* Mobile-first responsive container */
         .container {
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border-radius: 20px;
-            padding: 30px;
+            padding: 30px 25px;
             width: 100%;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             text-align: center;
-            animation: fadeInUp 0.8s ease-out;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: slideIn 0.4s ease-out;
+            border: 1px solid rgba(255, 255, 255, 0.2);
             position: relative;
             z-index: 10;
         }
 
-        @keyframes fadeInUp {
+        @keyframes slideIn {
             from {
                 opacity: 0;
                 transform: translateY(30px);
@@ -48,21 +50,20 @@
         }
 
         .container h5 {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             display: flex;
             justify-content: center;
-            align-items: center;
         }
 
         .container h5 img {
             height: 50px;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
             max-width: 100%;
             object-fit: contain;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
         }
 
         .container h1 {
-            color: #2c3e50;
+            color: #333;
             font-weight: 700;
             margin-bottom: 10px;
             font-size: 24px;
@@ -70,8 +71,8 @@
         }
 
         .container p {
-            color: #7f8c8d;
-            margin-bottom: 30px;
+            color: #666;
+            margin-bottom: 25px;
             font-size: 15px;
             line-height: 1.5;
         }
@@ -81,7 +82,7 @@
             color: #856404;
             padding: 14px;
             border-radius: 10px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             border: 1px solid #ffeaa7;
             font-size: 14px;
             text-align: left;
@@ -96,8 +97,8 @@
         input[type="password"] {
             width: 100%;
             padding: 16px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
+            margin-bottom: 18px;
+            border: 1px solid #e1e5e9;
             border-radius: 12px;
             font-size: 16px;
             transition: all 0.3s ease;
@@ -108,16 +109,15 @@
 
         input[type="text"]:focus,
         input[type="password"]:focus {
-            border-color: #ff6b6b;
-            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.2);
-            transform: translateY(-2px);
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
         }
 
         .remember-forgot {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
+            margin-bottom: 22px;
             font-size: 14px;
             flex-wrap: wrap;
             gap: 10px;
@@ -136,7 +136,7 @@
         }
 
         .remember-forgot a {
-            color: #ff6b6b;
+            color: #667eea;
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s ease;
@@ -144,14 +144,14 @@
         }
 
         .remember-forgot a:hover {
-            color: #ff5252;
+            color: #5a6fd8;
             text-decoration: underline;
         }
 
         button {
             width: 100%;
             padding: 16px;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             border-radius: 12px;
@@ -159,25 +159,25 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            margin-bottom: 22px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
             font-family: inherit;
             touch-action: manipulation;
         }
 
-        button:active {
-            transform: scale(0.98);
-        }
-
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 7px 20px rgba(255, 107, 107, 0.4);
+            box-shadow: 0 7px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
         }
 
         .divider {
             display: flex;
             align-items: center;
-            margin: 25px 0;
+            margin: 22px 0;
             color: #777;
             font-size: 14px;
             position: relative;
@@ -187,7 +187,7 @@
         .divider::after {
             content: "";
             flex: 1;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #e1e5e9;
         }
 
         .divider::before {
@@ -200,36 +200,37 @@
 
         .create-account {
             display: block;
-            color: #ff6b6b;
+            color: #667eea;
             text-decoration: none;
             font-weight: 600;
             font-size: 16px;
             transition: color 0.3s ease;
-            margin-top: 15px;
             padding: 12px;
             border-radius: 10px;
-            border: 1px solid rgba(255, 107, 107, 0.2);
+            border: 1px solid rgba(102, 126, 234, 0.2);
             display: inline-block;
             width: fit-content;
             margin: 0 auto;
         }
 
         .create-account:hover {
-            color: #ff5252;
+            color: #5a6fd8;
             text-decoration: underline;
-            background-color: rgba(255, 107, 107, 0.05);
+            background-color: rgba(102, 126, 234, 0.05);
         }
 
         /* Touch-friendly targets */
+        input[type="text"],
+        input[type="password"],
+        button,
         .remember-forgot label,
-        .create-account,
-        button {
-            min-height: 44px;
-            min-width: 44px;
+        .create-account {
+            min-height: 48px;
+            min-width: 48px;
         }
 
-        /* For very small screens */
-        @media (max-width: 320px) {
+        /* Responsive adjustments */
+        @media (max-width: 360px) {
             .container {
                 padding: 25px 20px;
             }
@@ -251,32 +252,21 @@
             .remember-forgot {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 8px;
+                gap: 12px;
             }
             
-            .divider {
-                margin: 20px 0;
-            }
-            
-            .create-account {
-                font-size: 15px;
-                padding: 10px;
+            .remember-forgot a {
+                align-self: flex-end;
             }
         }
 
-        /* For landscape mode on tablets */
-        @media (min-width: 768px) and (orientation: landscape) {
-            body {
-                padding: 30px;
-            }
-            
+        @media (min-width: 768px) {
             .container {
                 padding: 40px;
-                max-width: 450px;
             }
             
             .container h1 {
-                font-size: 26px;
+                font-size: 28px;
             }
             
             .container p {
@@ -284,29 +274,27 @@
             }
         }
 
-        /* Improve accessibility */
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
+        /* Landscape mode adjustments */
+        @media (orientation: landscape) and (max-height: 500px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px;
             }
         }
 
-        /* Hide scrollbars on iOS */
-        ::-webkit-scrollbar {
-            display: none;
+        /* High DPI screens */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .container {
+                border-radius: 20px;
+            }
         }
 
-        /* Prevent zoom on iOS when focusing inputs */
+        /* Prevent iOS zoom on input focus */
         input:focus,
-        textarea:focus {
+        textarea:focus,
+        select:focus {
             font-size: 16px;
-        }
-
-        /* Ensure content fits viewport on all devices */
-        @supports (height: 100vh) {
-            html {
-                height: 100vh;
-            }
         }
