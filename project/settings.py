@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-0yi5h2m77*nso1#tpvq#*&w4ebj*(_h5$szxx0hc7($7xzp*^^
 DEBUG = True
 
 ALLOWED_HOSTS = ['e-commerce-1lwr.onrender.com','.onrender.com']
-
+CSRF_TRUSTED_ORIGINS=['https://e-commerce-1lwr.onrender.com', 'https://www.e-commerce-1lwr.onrender.com']
 
 # Application definition
 
@@ -150,7 +150,7 @@ PAYSTACK_PUBLIC_KEY = 'pk_live_a7575e03655f155f401beffdc73d044844af13e3'
 PAYSTACK_SECRET_KEY = 'sk_live_55defb080c4cd9aa1ca6022c4b638b72bf76acbf'
 
 
-CSRF_TRUSTED_ORIGINS=['https://e-commerce-1lwr.onrender.com', 'https://www.e-commerce-1lwr.onrender.com']
+
 
 
 
